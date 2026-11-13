@@ -77,9 +77,9 @@ svg { width: 1em; height: 1em; fill: currentColor; flex: none; }
 .btn:disabled { opacity: .45; cursor: not-allowed; }
 
 /* ---------- topo ---------- */
-.nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .3s, border-color .3s; border-bottom: 1px solid transparent; }
-.nav.solid { background: rgba(12,12,12,.82); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-color: var(--line); }
-.nav__in { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; padding-top: env(safe-area-inset-top); }
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 80; padding-top: env(safe-area-inset-top); background: var(--bg); border-bottom: 1px solid transparent; transition: border-color .3s, box-shadow .3s; }
+.nav.solid { border-color: var(--line); box-shadow: 0 8px 24px rgba(0,0,0,.45); }
+.nav__in { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
 .nav__login { min-height: 38px; padding: 0 16px; font-size: 13px; border-color: var(--line); }
 
 /* abas: barra flutuante embaixo no celular, no topo no desktop */
@@ -91,7 +91,7 @@ svg { width: 1em; height: 1em; fill: currentColor; flex: none; }
 .tabbar a:not([aria-current]):hover { color: var(--fg); }
 
 /* ---------- hero ---------- */
-.hero { position: relative; min-height: 92svh; display: grid; align-items: end; padding: 110px 0 56px; overflow: hidden; isolation: isolate; --mx: 70%; --my: 30%; }
+.hero { position: relative; min-height: 92svh; display: grid; align-items: end; padding: calc(110px + env(safe-area-inset-top)) 0 56px; overflow: hidden; isolation: isolate; --mx: 70%; --my: 30%; }
 .hero::before { content: ""; position: absolute; inset: 0; z-index: -2; background: radial-gradient(600px circle at var(--mx) var(--my), rgba(255,255,255,.07), transparent 60%), linear-gradient(180deg, #0c0c0c 0%, #111 60%, #0c0c0c 100%); }
 .hero__word { position: absolute; z-index: -1; right: -.06em; top: 50%; transform: translateY(-58%); margin: 0; font: 400 clamp(180px, 52vw, 520px)/.8 var(--title); text-transform: uppercase; color: transparent; -webkit-text-stroke: 1px rgba(245,245,245,.09); white-space: nowrap; pointer-events: none; animation: drift 18s ease-in-out infinite alternate; }
 @keyframes drift { to { transform: translate(-6%, -58%); } }
