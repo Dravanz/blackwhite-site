@@ -8,6 +8,7 @@ Tempo estimado: 30 a 40 minutos, uma vez só.
    - Região: **South America (São Paulo)**.
    - Guarde a senha do banco num gerenciador de senhas (não vai no site).
 2. Abra **SQL Editor → New query**, cole todo o conteúdo de `supabase/schema.sql` e clique em **Run**.
+   Depois faça o mesmo com `supabase/log.sql` (log de alterações que só o admin vê no painel).
 3. Ainda no SQL Editor, cadastre o dono como primeiro admin (troque o e-mail):
    ```sql
    insert into public.equipe_admin (email, papel) values ('dono@gmail.com', 'admin');

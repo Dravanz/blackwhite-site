@@ -109,6 +109,7 @@
         { k: "ativo", t: "bool", label: "Visível no site", def: true },
       ] },
     config: { label: "Informações", table: "config", adminOnly: true, key: "chave", kv: true },
+    log: { label: "Log", table: "log_alteracoes", adminOnly: true, log: true },
   };
   const CONFIG_KEYS = [["whatsapp", "WhatsApp (com DDD, só números)"], ["instagram", "Instagram (sem @)"], ["endereco", "Endereço"], ["horario", "Horário de funcionamento"]];
 
@@ -174,9 +175,10 @@
     const tab = TABS[id];
     $("tabs").querySelectorAll("button").forEach((b) => b.setAttribute("aria-selected", b.dataset.id === id ? "true" : "false"));
     $("tab-title").textContent = tab.label;
-    $("btn-novo").hidden = !!tab.kv;
+    $("btn-novo").hidden = !!(tab.kv || tab.log);
     $("btn-importar").hidden = !tab.folder;
     $("rows").replaceChildren(h("p", { class: "empty", text: "Carregando…" }));
+    if (tab.log) return drawLog();
     let q = db.from(tab.table).select("*");
     if (!tab.kv && !tab.key) q = q.order("ordem").order("criado_em");
     const { data, error } = await q;
@@ -211,6 +213,44 @@
       toast("Informações salvas");
     });
     $("rows").replaceChildren(form);
+  }
+
+  // ---------- log de alterações (só admin; o banco também só deixa o admin ler) ----------
+  const LOG_TABELAS = { config: "Informações", equipe_admin: "Acessos" };
+  const LOG_CAMPOS = { chave: "Campo", valor: "Valor", email: "E-mail", papel: "Papel" };
+  Object.values(TABS).forEach((t) => {
+    if (t.table && !LOG_TABELAS[t.table]) LOG_TABELAS[t.table] = t.label;
+    (t.fields || []).forEach((f) => { LOG_CAMPOS[t.table + "." + f.k] = f.label.replace(/ \(.*\)$/, ""); });
+  });
+  const ACOES = { criou: "Criou", alterou: "Alterou", excluiu: "Excluiu" };
+  const quando = (iso) => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  function logValor(k, v) {
+    if (v == null || v === "") return "—";
+    if (typeof v === "boolean") return v ? "sim" : "não";
+    if (Array.isArray(v)) return v.length ? v.join(", ") : "—";
+    if (/^preco/.test(k)) return brl(v);
+    if (k === "foto") return String(v).split("/").pop();
+    if (/_ate$|_em$/.test(k) && !isNaN(Date.parse(v))) return quando(v);
+    const t = String(v);
+    return t.length > 140 ? t.slice(0, 140) + "…" : t;
+  }
+
+  async function drawLog() {
+    const { data, error } = await db.from("log_alteracoes").select("*").order("quando", { ascending: false }).limit(300);
+    if (error) return $("rows").replaceChildren(h("p", { class: "empty", text: friendly(error) }));
+    if (!data.length) return $("rows").replaceChildren(h("p", { class: "empty", text: "Nenhuma alteração registrada ainda." }));
+    $("rows").replaceChildren(h("p", { class: "log__hint", text: `Últimas ${data.length} alterações. Só o admin vê esta aba.` }), ...data.map((l) => {
+      const m = l.mudancas || {};
+      const campo = (k) => LOG_CAMPOS[l.tabela + "." + k] || LOG_CAMPOS[k] || k;
+      const linhas = l.acao === "alterou"
+        ? Object.entries(m).map(([k, v]) => h("li", {}, h("span", { text: campo(k) }), h("s", { text: logValor(k, v && v.de) }), " → ", h("b", { text: logValor(k, v && v.para) })))
+        : Object.entries(m).filter(([, v]) => v != null && v !== "" && !(Array.isArray(v) && !v.length)).map(([k, v]) => h("li", {}, h("span", { text: campo(k) }), h("b", { text: logValor(k, v) })));
+      return h("article", { class: "log log--" + l.acao },
+        h("div", { class: "log__head" },
+          h("b", { text: `${ACOES[l.acao] || l.acao} · ${LOG_TABELAS[l.tabela] || l.tabela}${l.registro ? " · " + l.registro : ""}` }),
+          h("small", { text: [quando(l.quando), l.email, l.ip ? "IP " + l.ip : "IP desconhecido"].join("  ·  ") })),
+        linhas.length ? h("ul", { class: "log__diff" }, linhas) : null);
+    }));
   }
 
   // ---------- formulário ----------

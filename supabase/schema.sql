@@ -218,3 +218,7 @@ create policy "imagens: equipe exclui" on storage.objects for delete to authenti
 -- ---------------------------------------------------------------------
 -- insert into public.equipe_admin (email, papel) values ('dono@gmail.com', 'admin')
 --   on conflict (email) do update set papel = 'admin', ativo = true;
+
+-- ---------------------------------------------------------------------
+-- 7. Log de alterações: veja supabase/log.sql (rode depois deste arquivo)
+-- ---------------------------------------------------------------------
