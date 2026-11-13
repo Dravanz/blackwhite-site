@@ -1,0 +1,59 @@
+# Passo a passo para colocar no ar
+
+Tempo estimado: 30 a 40 minutos, uma vez só.
+
+## 1. Supabase (banco, login e imagens)
+
+1. Crie uma conta em <https://supabase.com> e clique em **New project**.
+   - Região: **South America (São Paulo)**.
+   - Guarde a senha do banco num gerenciador de senhas (não vai no site).
+2. Abra **SQL Editor → New query**, cole todo o conteúdo de `supabase/schema.sql` e clique em **Run**.
+3. Ainda no SQL Editor, cadastre o dono como primeiro admin (troque o e-mail):
+   ```sql
+   insert into public.equipe_admin (email, papel) values ('dono@gmail.com', 'admin');
+   ```
+4. **Tempo do token**: *Project Settings → JWT Keys* (ou *Auth → Sessions*, conforme a versão do painel) → **Access token expiry** = `900` segundos.
+5. **Desligue o login por e-mail/senha**: *Authentication → Sign In / Providers → Email* → desativar. Só o Google fica ligado.
+6. Copie *Project Settings → API*: **Project URL** e a chave **anon / publishable**. Cole em `js/config.js`.
+   > Nunca use a chave `service_role` / `secret` no site.
+
+## 2. Google (login OAuth)
+
+1. Acesse <https://console.cloud.google.com>, crie um projeto (ex.: "Barbearia site").
+2. **APIs e serviços → Tela de consentimento OAuth**: tipo *Externo*, preencha nome e e-mail de suporte. Publique o app ("Em produção").
+3. **Credenciais → Criar credenciais → ID do cliente OAuth → Aplicativo da Web**.
+   - *URIs de redirecionamento autorizados*: `https://SEU-PROJETO.supabase.co/auth/v1/callback`
+4. Copie o **Client ID** e o **Client secret**.
+5. No Supabase: *Authentication → Sign In / Providers → Google* → ative, cole os dois valores e salve.
+6. No Supabase: *Authentication → URL Configuration*:
+   - **Site URL**: `https://dravanz.github.io/barbearia-site/` (ou o domínio próprio)
+   - **Redirect URLs**: adicione `https://dravanz.github.io/barbearia-site/admin.html`
+     (e `http://localhost:3000/admin.html` se for testar localmente)
+
+## 3. GitHub Pages (site)
+
+1. No repositório: *Settings → Pages → Build and deployment → Deploy from a branch* → `main` / `(root)`.
+2. Em alguns minutos o site fica em `https://dravanz.github.io/barbearia-site/`.
+3. **Keep-alive** (evita que o Supabase grátis pause por inatividade): *Settings → Secrets and variables → Actions → Variables* → crie `SUPABASE_URL` e `SUPABASE_ANON_KEY` com os mesmos valores do `js/config.js`.
+
+### Domínio próprio (opcional)
+
+Registre no Registro.br, crie um registro `CNAME` apontando para `dravanz.github.io`
+e informe o domínio em *Settings → Pages → Custom domain* (marque **Enforce HTTPS**).
+Depois atualize **Site URL** e **Redirect URLs** no Supabase.
+
+## 4. Primeiro acesso
+
+1. Abra `/admin.html`, clique em **Entrar com Google** com o e-mail cadastrado no passo 1.3.
+2. Na aba **Informações**, preencha WhatsApp, Instagram, endereço e horário.
+3. Na aba **Acessos**, libere os e-mails dos gerentes.
+4. Cadastre cortes, barbeiros, itens do café e produtos.
+
+## Limites do plano grátis (Supabase Free)
+
+- 500 MB de banco (sobra muito para esse uso).
+- 1 GB de imagens (as fotos são otimizadas para ~150–300 KB, então cabem milhares).
+- 5 GB de tráfego por mês.
+- Pausa após 7 dias sem acesso (resolvido pelo keep-alive).
+
+Se um dia passar disso, o plano Pro custa US$ 25/mês, ou dá para migrar para o servidor próprio.
