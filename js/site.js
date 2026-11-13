@@ -183,6 +183,13 @@
         b.instagram && h("a", { href: `https://instagram.com/${b.instagram}`, target: "_blank", rel: "noopener noreferrer" }, icon("ig"), "@" + b.instagram)))) : [h("p", { class: "empty", text: "Em breve" })]));
   }
 
+  // botão "Quero este" que abre o WhatsApp com o nome do item
+  function quero(texto, cls) {
+    const wa = (window.__cfg?.whatsapp || "").replace(/\D/g, "");
+    if (!wa) return null;
+    return h("a", { class: "btn " + cls, href: `https://wa.me/${wa}?text=${encodeURIComponent(texto)}`, target: "_blank", rel: "noopener noreferrer" }, "Quero este", icon("arrow"));
+  }
+
   // ---------- café ----------
   async function cafe() {
     const itens = await load("cafe_itens");
@@ -195,7 +202,8 @@
         itens.filter((i) => i.categoria === cat).map((i) => h("div", { class: "menu-row" + (i.disponivel === false ? " is-off" : "") },
           h("div", { class: "menu-row__img" }, imgUrl(i.foto) ? h("img", { src: imgUrl(i.foto), alt: "", loading: "lazy" }) : null),
           h("div", {}, h("b", { text: (i.destaque ? "★ " : "") + i.nome }), i.descricao && h("span", { text: i.descricao })),
-          h("span", { class: "price", text: brl(i.preco) }))))));
+          h("div", { class: "menu-row__end" }, h("span", { class: "price", text: brl(i.preco) }),
+            i.disponivel !== false && quero(`Olá! Quero pedir: ${i.nome} (${brl(i.preco)})`, "btn--line btn--xs")))))));
       if (!itens.length) return box.replaceChildren(h("p", { class: "empty", text: "Cardápio em breve" }));
       // em "Tudo" mostra só os primeiros itens; ao escolher uma categoria mostra todos
       const rows = [...box.querySelectorAll(".menu-row")];
@@ -235,7 +243,7 @@
     const timer = promo && p.promo_ate ? h("span", { class: "timer" }) : null;
     if (timer) countdown(timer, p.promo_ate);
     const price = h("span", { class: "price" }, promo && h("s", { text: brl(p.preco) }), brl(promo ? p.preco_promo : p.preco));
-    const msg = encodeURIComponent(`Olá! Tenho interesse no produto: ${p.nome}`);
+    const msg = `Olá! Tenho interesse no produto: ${p.nome} (${brl(promo ? p.preco_promo : p.preco)})`;
     const body = [
       h("span", { class: "small", text: p.categoria }),
       h("h3", { text: p.nome }),
@@ -249,13 +257,12 @@
       off ? h("span", { class: "tag tag--off", text: `-${off}%` }) : null,
     ];
     if (big) {
-      const wa = (window.__cfg?.whatsapp || "").replace(/\D/g, "");
       return h("article", { class: "feature rv" },
         h("div", { class: "item__img" }, ...tags, ...pic(p.foto, p.nome).childNodes),
-        h("div", { class: "feature__body" }, ...body,
-          wa && !p.esgotado && h("a", { class: "btn btn--dark", href: `https://wa.me/${wa}?text=${msg}`, target: "_blank", rel: "noopener noreferrer" }, "Quero este", icon("arrow"))));
+        h("div", { class: "feature__body" }, ...body, !p.esgotado && quero(msg, "btn--dark")));
     }
-    return h("article", { class: "item rv" + (p.esgotado ? " is-out" : "") }, ...tags, pic(p.foto, p.nome), h("div", { class: "item__body" }, ...body));
+    return h("article", { class: "item rv" + (p.esgotado ? " is-out" : "") }, ...tags, pic(p.foto, p.nome),
+      h("div", { class: "item__body" }, ...body, !p.esgotado && quero(msg, "btn--line btn--sm item__cta")));
   }
 
   async function loja() {

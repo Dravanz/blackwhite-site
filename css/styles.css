@@ -205,6 +205,12 @@ svg { width: 1em; height: 1em; fill: currentColor; flex: none; }
 .menu-row span { display: block; font-size: 13px; line-height: 1.45; color: var(--muted); }
 .menu-row .price { font-size: 22px; color: var(--fg); }
 .menu-row.is-off { opacity: .4; }
+.menu-row__end { display: grid; justify-items: end; gap: 8px; }
+.menu-row .menu-row__end .btn { display: inline-flex; color: var(--fg); font-size: 11px; line-height: 1; }
+.menu-row .menu-row__end .btn:hover { color: var(--bg); }
+.btn--xs { min-height: 30px; padding: 0 10px; font-size: 11px; gap: 6px; }
+.btn--xs svg { width: 12px; height: 12px; }
+.item__cta { margin-top: 10px; width: 100%; justify-content: center; }
 .menu-row.is-off .price::after { content: " esgotado"; font: 700 11px var(--font); letter-spacing: .1em; text-transform: uppercase; }
 
 /* ---------- vazio / aviso ---------- */
