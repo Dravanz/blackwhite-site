@@ -25,7 +25,8 @@
   const icon = (id) => { const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("aria-hidden", "true"); const u = document.createElementNS("http://www.w3.org/2000/svg", "use"); u.setAttribute("href", "#" + id); s.append(u); return s; };
   const brl = (n) => Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const SAFE_PATH = /^(barbeiros|cortes|cafe|loja)\/[A-Za-z0-9_-]+\.(webp|jpe?g|png)$/;
-  const imgUrl = (p) => (LIVE && p && SAFE_PATH.test(p)) ? `${C.supabaseUrl}/storage/v1/object/public/imagens/${p}` : null;
+  const LOCAL_PATH = /^img\/(barbeiros|cortes|cafe|loja)\/[a-z0-9-]+\.webp$/; // fotos guardadas no próprio site
+  const imgUrl = (p) => !p ? null : LOCAL_PATH.test(p) ? p : (LIVE && SAFE_PATH.test(p)) ? `${C.supabaseUrl}/storage/v1/object/public/imagens/${p}` : null;
   const pic = (path, alt, letter) => {
     const box = h("div", { class: "item__img" });
     const src = imgUrl(path);

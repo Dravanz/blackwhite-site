@@ -40,7 +40,9 @@
   };
   const brl = (n) => n == null || n === "" ? "" : Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   const SAFE_PATH = /^(barbeiros|cortes|cafe|loja)\/[A-Za-z0-9_-]+\.(webp|jpe?g|png)$/;
-  const imgUrl = (p) => p && SAFE_PATH.test(p) ? db.storage.from("imagens").getPublicUrl(p).data.publicUrl : null;
+  const LOCAL_PATH = /^img\/(barbeiros|cortes|cafe|loja)\/[a-z0-9-]+\.webp$/; // fotos guardadas no próprio site
+  const imgUrl = (p) => !p ? null : LOCAL_PATH.test(p) ? p : SAFE_PATH.test(p) ? db.storage.from("imagens").getPublicUrl(p).data.publicUrl : null;
+  const removeFile = (p) => p && SAFE_PATH.test(p) ? db.storage.from("imagens").remove([p]).catch(() => {}) : Promise.resolve();
   let toastT;
   const toast = (msg, err) => { const t = $("toast"); t.textContent = msg; t.className = "toast show" + (err ? " err" : ""); clearTimeout(toastT); toastT = setTimeout(() => t.className = "toast", 3200); };
   const friendly = (e) => {
@@ -367,7 +369,7 @@
         : await db.from(tab.table).insert(data).select();
       if (res.error) throw res.error;
       if (!res.data?.length) throw new Error("Sem permissão ou sessão expirada. Entre de novo.");
-      if (oldFoto && (uploaded || removeFoto)) await db.storage.from("imagens").remove([oldFoto]);
+      if (oldFoto && (uploaded || removeFoto)) await removeFile(oldFoto);
       $("dlg").close(); toast("Salvo!"); open(current);
     } catch (err) {
       if (uploaded) await db.storage.from("imagens").remove([uploaded]).catch(() => {});
@@ -381,7 +383,7 @@
     const key = tab.key || "id";
     const { data, error } = await db.from(tab.table).delete().eq(key, editing[key]).select();
     if (error || !data?.length) { $("form-err").textContent = error ? friendly(error) : "Sem permissão ou sessão expirada."; return; }
-    if (editing.foto) await db.storage.from("imagens").remove([editing.foto]).catch(() => {});
+    if (editing.foto) await removeFile(editing.foto);
     $("dlg").close(); toast("Excluído"); open(current);
   });
 
