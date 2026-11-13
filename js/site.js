@@ -162,6 +162,17 @@
     container.after(btn); apply();
   }
 
+  // botão "Agendar" de cada corte: abre a agenda do Booksy (ou o WhatsApp, se não houver Booksy)
+  function agendarBtn(nome) {
+    const booksy = /^https:\/\/([a-z0-9-]+\.)?booksy\.com\//.test(C.booksy || "") ? C.booksy : null;
+    if (booksy) {
+      const b = h("button", { class: "btn btn--line btn--sm item__cta", type: "button" }, "Agendar", icon("arrow"));
+      b.addEventListener("click", () => agenda(booksy));
+      return b;
+    }
+    return quero(`Olá! Quero agendar: ${nome}`, "btn--line btn--sm item__cta", "Agendar");
+  }
+
   // ---------- barbearia ----------
   async function barbearia() {
     const [cortes, equipe] = await Promise.all([load("cortes"), load("barbeiros")]);
@@ -172,7 +183,8 @@
       h("div", { class: "item__body" },
         h("h3", { text: c.nome }),
         c.descricao && h("p", { class: "item__desc", text: c.descricao }),
-        h("div", { class: "item__meta" }, h("span", { class: "price", text: brl(c.preco) }), c.duracao_min && h("span", { class: "small", text: `${c.duracao_min} min` }))))) : [h("p", { class: "empty", text: "Em breve" })]));
+        h("div", { class: "item__meta" }, h("span", { class: "price", text: brl(c.preco) }), c.duracao_min && h("span", { class: "small", text: `${c.duracao_min} min` })),
+        agendarBtn(c.nome)))) : [h("p", { class: "empty", text: "Em breve" })]));
 
     if (cortes.length) verMais(g, [...g.children]);
 
