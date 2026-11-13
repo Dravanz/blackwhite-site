@@ -177,17 +177,16 @@ drop policy if exists "admin edita" on public.config;
 create policy "leitura publica" on public.config for select to anon, authenticated using (true);
 create policy "admin edita" on public.config for all to authenticated using (public.e_admin()) with check (public.e_admin());
 
--- Lista da equipe: só admin vê e edita (gerente não pode se promover)
+-- Lista da equipe: ninguém mexe pelo site. Só pelo painel do Supabase
+-- (Table Editor ou SQL Editor), que usa acesso de dono e ignora o RLS.
 alter table public.equipe_admin enable row level security;
 drop policy if exists "admin gerencia equipe" on public.equipe_admin;
-create policy "admin gerencia equipe" on public.equipe_admin for all to authenticated
-  using (public.e_admin()) with check (public.e_admin());
 
 -- Permissões de tabela (RLS decide linha a linha)
 grant select on public.barbeiros, public.cortes, public.cafe_itens, public.produtos, public.config to anon;
 grant select, insert, update, delete on public.barbeiros, public.cortes, public.cafe_itens,
-  public.produtos, public.config, public.equipe_admin to authenticated;
-revoke all on public.equipe_admin from anon;
+  public.produtos, public.config to authenticated;
+revoke all on public.equipe_admin from anon, authenticated;
 
 -- ---------------------------------------------------------------------
 -- 5. Bucket de imagens

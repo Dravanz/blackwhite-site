@@ -47,36 +47,62 @@
   }
 
   // ---------- layout comum ----------
-  function chrome(cfg) {
+  function navBar() {
     const links = [["./", C.barbearia, "barbearia"], ["cafe.html", C.cafe, "cafe"], ["loja.html", C.loja, "loja"]];
+    const brand = () => h("a", { href: "./", class: "brand", "aria-label": "Início" }, h("i", { "aria-hidden": "true" }), C.marca.a, h("b", { text: " " + C.marca.b }));
     const nav = h("header", { class: "nav" },
-      h("div", { class: "wrap nav__in" },
-        h("a", { href: "./", class: "brand", "aria-label": "Início" }, h("span", { text: C.marca.a }), h("span", { text: " " + C.marca.b })),
-        h("a", { href: "admin.html", class: "btn btn--outline nav__login", rel: "nofollow", text: "Entrar" })),
-      h("nav", { class: "tabs-nav", "aria-label": "Seções" }, links.map(([href, label, id]) => h("a", { href, "aria-current": page === id ? "page" : null, text: label }))));
-    document.body.prepend(nav);
+      h("div", { class: "wrap nav__in" }, brand(),
+        h("a", { href: "admin.html", class: "btn btn--line nav__login", rel: "nofollow", text: "Entrar" })));
+    const tabs = h("nav", { class: "tabbar", "aria-label": "Seções" }, links.map(([href, label, id]) => h("a", { href, "aria-current": page === id ? "page" : null, text: label })));
+    document.body.prepend(nav, tabs);
+    const solid = () => nav.classList.toggle("solid", scrollY > 40);
+    addEventListener("scroll", solid, { passive: true }); solid();
 
+  }
+
+  function chrome(cfg) {
     const wa = (cfg.whatsapp || "").replace(/\D/g, "");
     const ig = (cfg.instagram || "").replace(/[^A-Za-z0-9._]/g, "");
-    const foot = h("footer", { class: "foot" }, h("div", { class: "wrap" },
-      h("a", { href: "./", class: "brand" }, h("span", { text: C.marca.a }), h("span", { text: " " + C.marca.b })),
-      h("div", { class: "foot__info" }, cfg.endereco && h("span", { text: cfg.endereco }), cfg.horario && h("span", { text: cfg.horario })),
-      h("div", { class: "foot__links" },
-        wa && h("a", { href: `https://wa.me/${wa}`, target: "_blank", rel: "noopener noreferrer" }, icon("wa"), "WhatsApp"),
-        ig && h("a", { href: `https://instagram.com/${ig}`, target: "_blank", rel: "noopener noreferrer" }, icon("ig"), "@" + ig))));
+    const foot = h("footer", { class: "foot" },
+      h("p", { class: "foot__big", "aria-hidden": "true", text: `${C.marca.a} ${C.marca.b}` }),
+      h("div", { class: "wrap" },
+        h("div", { class: "foot__info" }, cfg.endereco && h("span", { text: cfg.endereco }), cfg.horario && h("span", { text: cfg.horario })),
+        h("div", { class: "foot__links" },
+          wa && h("a", { href: `https://wa.me/${wa}`, target: "_blank", rel: "noopener noreferrer" }, icon("wa"), "WhatsApp"),
+          ig && h("a", { href: `https://instagram.com/${ig}`, target: "_blank", rel: "noopener noreferrer" }, icon("ig"), "@" + ig))));
     document.body.append(foot);
-    if (!LIVE) foot.prepend(h("div", { class: "wrap" }, h("p", { class: "notice", text: "Modo demonstração: conteúdo de exemplo. Preencha js/config.js com os dados do Supabase para usar o conteúdo real." })));
+    if (!LIVE) foot.querySelector(".wrap").prepend(h("p", { class: "notice", text: "Modo demonstração: conteúdo de exemplo. Preencha js/config.js com os dados do Supabase para usar o conteúdo real." }));
 
     const cta = document.getElementById("cta");
     if (cta && wa) {
       const msg = { barbearia: "Olá! Quero agendar um horário.", cafe: "Olá! Quero fazer um pedido.", loja: "Olá! Quero saber mais sobre os produtos." }[page];
-      cta.append(h("a", { class: "btn btn--dark", href: `https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, target: "_blank", rel: "noopener noreferrer" }, icon("wa"),
-        page === "barbearia" ? "Agendar pelo WhatsApp" : "Falar no WhatsApp"));
+      cta.prepend(h("a", { class: "btn btn--brass", href: `https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, target: "_blank", rel: "noopener noreferrer" }, icon("wa"),
+        page === "barbearia" ? "Agendar horário" : "Chamar no WhatsApp"));
+    }
+    const info = document.getElementById("info");
+    if (info) {
+      if (cfg.horario) info.append(h("div", {}, h("b", { text: "Horário" }), cfg.horario));
+      if (cfg.endereco) info.append(h("div", {}, h("b", { text: "Endereço" }), cfg.endereco));
+    }
+
+    // luz que segue o dedo/mouse no topo (só em telas com mouse)
+    const hero = document.querySelector(".hero");
+    if (hero && matchMedia("(hover: hover)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      let raf = 0;
+      hero.addEventListener("pointermove", (e) => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const r = hero.getBoundingClientRect();
+          hero.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100).toFixed(1) + "%");
+          hero.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%");
+        });
+      });
     }
   }
 
   function reveal() {
     const els = document.querySelectorAll(".rv");
+    document.querySelectorAll(".grid, .team").forEach((g) => [...g.children].forEach((c, i) => c.style.setProperty("--i", i % 4)));
     if (!("IntersectionObserver" in window)) return els.forEach((e) => e.classList.add("in"));
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12 });
     els.forEach((e) => io.observe(e));
@@ -86,9 +112,9 @@
   async function barbearia() {
     const [cortes, equipe] = await Promise.all([load("cortes"), load("barbeiros")]);
     const g = document.getElementById("cortes");
-    g.replaceChildren(...(cortes.length ? cortes.map((c) => h("article", { class: "item rv" },
+    g.replaceChildren(...(cortes.length ? cortes.map((c, i) => h("article", { class: "item rv" },
       c.destaque && h("span", { class: "tag", text: "Destaque" }),
-      pic(c.foto, c.nome),
+      (() => { const b = pic(c.foto, c.nome); b.append(h("span", { class: "item__n", text: String(i + 1).padStart(2, "0") })); return b; })(),
       h("div", { class: "item__body" },
         h("h3", { text: c.nome }),
         c.descricao && h("p", { class: "item__desc", text: c.descricao }),
@@ -183,7 +209,8 @@
 
   // ---------- início ----------
   (async () => {
-    const cfg = await loadConfig();
+    navBar();
+    const cfg = await loadConfig().catch(() => ({}));
     window.__cfg = cfg;
     chrome(cfg);
     document.querySelectorAll("[data-name]").forEach((el) => { el.textContent = C[el.dataset.name] || el.textContent; });

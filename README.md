@@ -8,7 +8,7 @@ administrativo para o dono e os gerentes editarem tudo pelo celular.
 - **Loja** (`loja.html`): produtos com destaque grande no topo, preço promocional com % OFF, contagem regressiva da promoção, selos ("Novo", "Últimas peças"), tamanhos e botão "Quero este" direto para o WhatsApp.
 - **Painel** (`admin.html`): login com Google, sessão de 15 minutos, cadastro/edição/exclusão com envio de fotos.
 
-Visual minimalista inspirado no site do evento Black White, com a fonte do próprio sistema (nada para baixar, carrega rápido no celular).
+Identidade "barber club": preto, creme e latão, poste de barbeiro animado, faixa rolante e títulos em Anton (fonte própria de 18 KB, hospedada no repositório). Efeitos só com CSS, leves no celular.
 
 ## Como funciona
 
@@ -25,7 +25,7 @@ alterar nada.
 ## Segurança
 
 - **Login só via OAuth (Google)**, fluxo PKCE. Nenhuma senha passa pelo site.
-- **Lista de acesso por e-mail** (`equipe_admin`) com dois papéis: `admin` (tudo, inclusive acessos e informações) e `gerente` (conteúdo).
+- **Lista de acesso por e-mail** (`equipe_admin`) com dois papéis: `admin` (conteúdo e informações) e `gerente` (conteúdo). Essa lista só pode ser alterada direto no Supabase (Table Editor), nunca pelo site.
 - **Sessão de 15 minutos conferida no servidor**: a função `papel_atual()` recusa qualquer sessão criada há mais de 15 min, mesmo que o token seja renovado. O painel também não renova o token e desloga sozinho, guardando a sessão só no `sessionStorage` (some ao fechar a aba).
 - **Row Level Security** em todas as tabelas: o público só lê itens visíveis; insert/update/delete exigem papel válido.
 - **Validação dupla**: no formulário e no banco (limites de tamanho, preço ≥ 0, promo < preço, formato de Instagram, etc.).

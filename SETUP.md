@@ -47,7 +47,7 @@ Depois atualize **Site URL** e **Redirect URLs** no Supabase.
 
 1. Abra `/admin.html`, clique em **Entrar com Google** com o e-mail cadastrado no passo 1.3.
 2. Na aba **Informações**, preencha WhatsApp, Instagram, endereço e horário.
-3. Na aba **Acessos**, libere os e-mails dos gerentes.
+3. Para liberar gerentes: no Supabase, *Table Editor → equipe_admin → Insert row* (e-mail em minúsculas, papel `gerente`). Também adicione o e-mail em *Usuários de teste* no Google.
 4. Cadastre cortes, barbeiros, itens do café e produtos.
 
 ## Limites do plano grátis (Supabase Free)

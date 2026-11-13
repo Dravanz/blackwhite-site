@@ -107,13 +107,6 @@
         { k: "ativo", t: "bool", label: "Visível no site", def: true },
       ] },
     config: { label: "Informações", table: "config", adminOnly: true, key: "chave", kv: true },
-    equipe: { label: "Acessos", table: "equipe_admin", adminOnly: true, key: "email", sub: (r) => r.papel,
-      flags: (r) => [["Ativo", r.ativo]],
-      fields: [
-        { k: "email", t: "email", label: "E-mail Google", req: true, lockOnEdit: true },
-        { k: "papel", t: "select", label: "Papel", opts: ["gerente", "admin"], def: "gerente", hint: "Gerente edita conteúdo. Admin também gerencia acessos e informações." },
-        { k: "ativo", t: "bool", label: "Acesso liberado", def: true },
-      ] },
   };
   const CONFIG_KEYS = [["whatsapp", "WhatsApp (com DDD, só números)"], ["instagram", "Instagram (sem @)"], ["endereco", "Endereço"], ["horario", "Horário de funcionamento"]];
 
