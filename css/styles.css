@@ -285,3 +285,9 @@ html.lock { overflow: hidden; }
 @media (min-width: 700px) { .shots__t img { width: 260px; height: 320px; } }
 @media (hover: none) { .shots__t img { filter: none; } }
 .member .item__img img { object-position: center 20%; }
+
+/* iOS 26 (Safari "vidro"): a área do relógio fica transparente e o Safari
+   posiciona o topo fixo logo abaixo dela. Este bloco estende o fundo da barra
+   para cima, cobrindo o relógio/bateria e escondendo o conteúdo que passa por trás. */
+html { background: var(--bg); }
+.nav::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 120px; background: var(--bg); pointer-events: none; }
