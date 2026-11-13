@@ -24,8 +24,8 @@
   };
   const icon = (id) => { const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("aria-hidden", "true"); const u = document.createElementNS("http://www.w3.org/2000/svg", "use"); u.setAttribute("href", "#" + id); s.append(u); return s; };
   const brl = (n) => Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  const SAFE_PATH = /^(barbeiros|cortes|cafe|loja)\/[A-Za-z0-9_-]+\.(webp|jpe?g|png)$/;
-  const LOCAL_PATH = /^img\/(barbeiros|cortes|cafe|loja)\/[a-z0-9-]+\.webp$/; // fotos guardadas no próprio site
+  const SAFE_PATH = /^(barbeiros|cortes|cafe|loja|eventos)\/[A-Za-z0-9_-]+\.(webp|jpe?g|png)$/;
+  const LOCAL_PATH = /^img\/(barbeiros|cortes|cafe|loja|eventos)\/[a-z0-9-]+\.webp$/; // fotos guardadas no próprio site
   const imgUrl = (p) => !p ? null : LOCAL_PATH.test(p) ? p : (LIVE && SAFE_PATH.test(p)) ? `${C.supabaseUrl}/storage/v1/object/public/imagens/${p}` : null;
   const pic = (path, alt, letter) => {
     const box = h("div", { class: "item__img" });
@@ -49,7 +49,7 @@
 
   // ---------- layout comum ----------
   function navBar() {
-    const links = [["./", C.barbearia, "barbearia"], ["cafe.html", C.cafe, "cafe"], ["loja.html", C.loja, "loja"]];
+    const links = [["./", C.barbearia, "barbearia"], ["cafe.html", C.cafe, "cafe"], ["loja.html", C.loja, "loja"], ["eventos.html", C.eventos || "Eventos", "eventos"]];
     const brand = () => h("a", { href: "./", class: "brand", "aria-label": "Início" }, h("i", { "aria-hidden": "true" }), C.marca.a, h("b", { text: " " + C.marca.b }));
     const nav = h("header", { class: "nav" },
       h("div", { class: "wrap nav__in" }, brand(),
@@ -110,7 +110,7 @@
       const head = document.querySelector("#cortes-sec .sec-head");
       if (head) { const b2 = h("button", { class: "btn btn--line btn--sm", type: "button" }, "Agendar", icon("arrow")); b2.addEventListener("click", () => agenda(booksy)); head.append(b2); }
     } else if (cta && wa) {
-      const msg = { barbearia: "Olá! Quero agendar um horário.", cafe: "Olá! Quero fazer um pedido.", loja: "Olá! Quero saber mais sobre os produtos." }[page];
+      const msg = { barbearia: "Olá! Quero agendar um horário.", cafe: "Olá! Quero fazer um pedido.", loja: "Olá! Quero saber mais sobre os produtos.", eventos: "Olá! Quero saber dos próximos eventos." }[page];
       cta.prepend(h("a", { class: "btn btn--brass", href: `https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, target: "_blank", rel: "noopener noreferrer" }, icon("wa"),
         page === "barbearia" ? "Agendar horário" : "Chamar no WhatsApp"));
     }
@@ -184,10 +184,10 @@
   }
 
   // botão "Quero este" que abre o WhatsApp com o nome do item
-  function quero(texto, cls) {
+  function quero(texto, cls, label = "Quero este") {
     const wa = (window.__cfg?.whatsapp || "").replace(/\D/g, "");
     if (!wa) return null;
-    return h("a", { class: "btn " + cls, href: `https://wa.me/${wa}?text=${encodeURIComponent(texto)}`, target: "_blank", rel: "noopener noreferrer" }, "Quero este", icon("arrow"));
+    return h("a", { class: "btn " + cls, href: `https://wa.me/${wa}?text=${encodeURIComponent(texto)}`, target: "_blank", rel: "noopener noreferrer" }, label, icon("arrow"));
   }
 
   // ---------- café ----------
@@ -282,6 +282,73 @@
     if (ofertas.length) verMais(og, [...og.children]);
   }
 
+  // ---------- eventos ----------
+  const SAFE_LINK = /^https:\/\/[^\s"'<>]+$/;
+  const dia = (d) => d.toLocaleDateString("pt-BR", { day: "2-digit", timeZone: "America/Sao_Paulo" });
+  const mes = (d) => d.toLocaleDateString("pt-BR", { month: "short", timeZone: "America/Sao_Paulo" }).replace(".", "");
+  const dataLonga = (d) => d.toLocaleString("pt-BR", { weekday: "long", day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" }).replace(/,? às /, " · ");
+
+  function faltam(el, quando) {
+    const tick = () => {
+      const s = Math.floor((quando - Date.now()) / 1000);
+      if (s <= 0) { el.textContent = "Acontecendo agora"; return; }
+      const d = Math.floor(s / 86400), hh = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+      el.textContent = d ? `Faltam ${d} dia${d > 1 ? "s" : ""} e ${hh}h` : `Faltam ${hh}h ${String(m).padStart(2, "0")}min`;
+      setTimeout(tick, 30000);
+    };
+    tick();
+  }
+
+  function eventoCard(e, passado, big) {
+    const d = new Date(e.inicio);
+    const chip = h("span", { class: "evt__date" }, h("b", { text: dia(d) }), mes(d));
+    const link = SAFE_LINK.test(e.link || "") && h("a", { class: big ? "btn btn--outline" : "evt__link", href: e.link, target: "_blank", rel: "noopener noreferrer" }, passado ? "Ver como foi" : "Saiba mais", icon("arrow"));
+    const timer = !passado ? h("span", { class: "timer" }) : null;
+    if (timer) faltam(timer, d.getTime());
+    const cta = !passado && quero(`Olá! Quero participar do evento: ${e.nome} (${dia(d)}/${String(d.getMonth() + 1).padStart(2, "0")})`, big ? "btn--dark" : "btn--line btn--sm item__cta", "Quero participar");
+    const body = [
+      h("span", { class: "small", text: dataLonga(d) }),
+      h("h3", { text: e.nome }),
+      e.descricao && h("p", { class: "item__desc", text: e.descricao }),
+      e.local && h("span", { class: "evt__local", text: e.local }),
+      timer,
+    ];
+    if (big) {
+      const img = pic(e.foto, e.nome);
+      return h("article", { class: "feature evt rv" },
+        h("div", { class: "item__img" }, h("span", { class: "tag", text: "Próximo evento" }), ...img.childNodes),
+        h("div", { class: "feature__body" }, ...body, h("div", { class: "evt__btns" }, cta, link)));
+    }
+    const img = pic(e.foto, e.nome); img.append(chip);
+    return h("article", { class: "item evt rv" + (passado ? " is-past" : "") },
+      passado && h("span", { class: "tag tag--out", text: "Encerrado" }),
+      img, h("div", { class: "item__body" }, ...body, link, cta));
+  }
+
+  function emBreve(cfg) {
+    const ig = (cfg.instagram || "").replace(/[^A-Za-z0-9._]/g, "");
+    return h("article", { class: "item evt soon rv" },
+      h("div", { class: "item__img soon__img", "aria-hidden": "true" }, h("span", { text: "Em" }), h("span", { class: "o", text: "breve" })),
+      h("div", { class: "item__body" },
+        h("span", { class: "small", text: "Novidades" }),
+        h("h3", { text: "Novidades em breve" }),
+        h("p", { class: "item__desc", text: "Estamos preparando o próximo encontro. Fique de olho." }),
+        ig && h("a", { class: "evt__link", href: `https://instagram.com/${ig}`, target: "_blank", rel: "noopener noreferrer" }, icon("ig"), "@" + ig)));
+  }
+
+  async function eventos() {
+    const todos = await load("eventos", "inicio");
+    const agora = Date.now() - 6 * 3600000; // continua em "próximos" até 6h depois de começar
+    const prox = todos.filter((e) => new Date(e.inicio).getTime() >= agora).sort((a, b) => new Date(a.inicio) - new Date(b.inicio));
+    const pass = todos.filter((e) => new Date(e.inicio).getTime() < agora).sort((a, b) => new Date(b.inicio) - new Date(a.inicio));
+    const [top, ...resto] = prox;
+    document.getElementById("proximo").replaceChildren(...(top ? [eventoCard(top, false, true)] : []));
+    document.getElementById("agenda").replaceChildren(...resto.map((e) => eventoCard(e)), emBreve(window.__cfg || {}));
+    const pg = document.getElementById("passados");
+    pg.replaceChildren(...(pass.length ? pass.map((e) => eventoCard(e, true)) : [h("p", { class: "empty", text: "O primeiro está chegando." })]));
+    if (pass.length) verMais(pg, [...pg.children]);
+  }
+
   // ---------- início ----------
   (async () => {
     navBar();
@@ -289,7 +356,7 @@
     window.__cfg = cfg;
     chrome(cfg);
     document.querySelectorAll("[data-name]").forEach((el) => { el.textContent = C[el.dataset.name] || el.textContent; });
-    try { await ({ barbearia, cafe, loja }[page] || (async () => {}))(); }
+    try { await ({ barbearia, cafe, loja, eventos }[page] || (async () => {}))(); }
     finally { reveal(); }
   })();
 })();

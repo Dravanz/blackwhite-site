@@ -29,5 +29,10 @@ window.DEMO = {
     { id: "p4", nome: "Pomada matte", descricao: "Fixação forte, efeito seco.", categoria: "Cuidados", preco: 49.9, preco_promo: 39.9, tamanhos: [] },
     { id: "p5", nome: "Camiseta White", descricao: "Algodão, estampa costas.", categoria: "Camisetas", preco: 89.9, tamanhos: ["P","M"], esgotado: true },
   ],
+  eventos: [
+    { id: "e1", nome: "Black White Networking", descricao: "Um dia inteiro de networking com empresários renomados.", inicio: "2026-11-08T09:00:00-03:00", local: "Rampa Hub Quartier · Pelotas", link: "https://dravanz.github.io/blackwhite-evento/", foto: "img/eventos/networking.webp" },
+    { id: "e2", nome: "Café & Barba", descricao: "Manhã de café especial e barba na navalha.", inicio: "2026-11-29T09:00:00-03:00", local: "Barbearia BlackWhite", foto: "img/eventos/cafe-e-barba.webp" },
+    { id: "e3", nome: "Noite do Degradê", descricao: "Cortes, música e brindes.", inicio: "2026-12-13T19:00:00-03:00", local: "Barbearia BlackWhite", foto: "img/eventos/noite-do-degrade.webp" },
+  ],
   config: { whatsapp: "", instagram: "", endereco: "Seu endereço aqui", horario: "Ter a sáb · 9h às 20h" },
 };

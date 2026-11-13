@@ -300,3 +300,23 @@ html { background: var(--bg); }
 .more { display: flex; margin: 28px auto 0; min-width: 220px; }
 .menu-row.is-last { border-bottom: 0; }
 #cortes, #produtos, #ofertas-grid, #cardapio { scroll-margin-top: 100px; }
+
+/* ---------- eventos ---------- */
+.evt__date { position: absolute; z-index: 2; left: 12px; top: 12px; display: grid; place-items: center; min-width: 58px; padding: 8px 8px 7px; border-radius: 12px; background: var(--fg); color: #111; font: 700 11px/1 var(--font); letter-spacing: .14em; text-transform: uppercase; }
+.evt__date b { font: 400 30px/1 var(--title); letter-spacing: 0; }
+.item.evt .tag { left: auto; right: 12px; }
+.evt__local { font-size: 13px; color: var(--muted); }
+.evt__local::before { content: "◉ "; color: var(--pole-r); }
+.evt__link { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; font-weight: 700; color: var(--fg); text-decoration: none; }
+.evt__link svg { width: 14px; height: 14px; }
+.evt .timer { justify-self: start; }
+.item.is-past .item__img img { filter: grayscale(1) contrast(1.06); }
+.item.is-past .evt__date { background: var(--bg3); color: var(--muted); }
+.feature.evt .evt__local { color: #555; }
+.evt__btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.soon__img { display: grid; place-content: center; text-align: center; font: 400 clamp(46px, 9vw, 72px)/.9 var(--title); text-transform: uppercase; background: repeating-linear-gradient(135deg, #161616 0 14px, #121212 14px 28px); }
+.soon__img::before { content: ""; position: absolute; left: -10%; right: -10%; bottom: 18%; height: 18px; transform: rotate(-6deg); background: repeating-linear-gradient(135deg, var(--pole-r) 0 10px, var(--pole-w) 10px 20px, var(--pole-b) 20px 30px, var(--pole-w) 30px 40px); }
+.soon__img .o { color: transparent; -webkit-text-stroke: 1.5px var(--fg); }
+@media (max-width: 999px) { .tabbar a { min-width: 0; padding: 0 13px; font-size: 13px; } }
+.feature.evt .feature__body::before { content: "Não perca"; }
+.feature.evt .item__img img { object-position: top; }

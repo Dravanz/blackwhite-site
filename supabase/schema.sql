@@ -207,7 +207,7 @@ create policy "imagens: equipe le" on storage.objects for select to authenticate
   using (bucket_id = 'imagens' and public.pode_editar());
 create policy "imagens: equipe envia" on storage.objects for insert to authenticated
   with check (bucket_id = 'imagens' and public.pode_editar()
-              and (storage.foldername(name))[1] in ('barbeiros','cortes','cafe','loja'));
+              and (storage.foldername(name))[1] in ('barbeiros','cortes','cafe','loja','eventos'));
 create policy "imagens: equipe altera" on storage.objects for update to authenticated
   using (bucket_id = 'imagens' and public.pode_editar());
 create policy "imagens: equipe exclui" on storage.objects for delete to authenticated
@@ -221,4 +221,5 @@ create policy "imagens: equipe exclui" on storage.objects for delete to authenti
 
 -- ---------------------------------------------------------------------
 -- 7. Log de alterações: veja supabase/log.sql (rode depois deste arquivo)
+-- 8. Eventos: veja supabase/eventos.sql (rode depois do log.sql)
 -- ---------------------------------------------------------------------

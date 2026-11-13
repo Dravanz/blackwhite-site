@@ -13,6 +13,7 @@ window.SITE_CONFIG = {
   barbearia: "Barbearia",
   cafe: "Café",
   loja: "Loja",
+  eventos: "Eventos",
 
   // Agenda online (Booksy). Abre dentro do site no botão "Agendar horário".
   booksy: "https://booksy.com/pt-br/instant-experiences/widget/399419",

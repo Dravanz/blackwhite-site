@@ -39,8 +39,8 @@
     return el;
   };
   const brl = (n) => n == null || n === "" ? "" : Number(n).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  const SAFE_PATH = /^(barbeiros|cortes|cafe|loja)\/[A-Za-z0-9_-]+\.(webp|jpe?g|png)$/;
-  const LOCAL_PATH = /^img\/(barbeiros|cortes|cafe|loja)\/[a-z0-9-]+\.webp$/; // fotos guardadas no próprio site
+  const SAFE_PATH = /^(barbeiros|cortes|cafe|loja|eventos)\/[A-Za-z0-9_-]+\.(webp|jpe?g|png)$/;
+  const LOCAL_PATH = /^img\/(barbeiros|cortes|cafe|loja|eventos)\/[a-z0-9-]+\.webp$/; // fotos guardadas no próprio site
   const imgUrl = (p) => !p ? null : LOCAL_PATH.test(p) ? p : SAFE_PATH.test(p) ? db.storage.from("imagens").getPublicUrl(p).data.publicUrl : null;
   const removeFile = (p) => p && SAFE_PATH.test(p) ? db.storage.from("imagens").remove([p]).catch(() => {}) : Promise.resolve();
   let toastT;
@@ -106,6 +106,18 @@
         { k: "ordem", t: "int", label: "Ordem de exibição" },
         { k: "destaque", t: "bool", label: "Destaque (aparece grande no topo)" },
         { k: "esgotado", t: "bool", label: "Esgotado" },
+        { k: "ativo", t: "bool", label: "Visível no site", def: true },
+      ] },
+    eventos: { label: "Eventos", table: "eventos", folder: "eventos", noImport: true, order: ["inicio", false],
+      sub: (r) => [new Date(r.inicio).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }), r.local].filter(Boolean).join(" · "),
+      flags: (r) => [["Já aconteceu", new Date(r.inicio) < new Date()]],
+      fields: [
+        { k: "foto", t: "image", label: "Foto ou cartaz" },
+        { k: "nome", t: "text", label: "Nome do evento", req: true, max: 80 },
+        { k: "descricao", t: "textarea", label: "Descrição", max: 500 },
+        { k: "inicio", t: "datetime", label: "Data e hora", req: true, hint: "Depois dessa data o evento passa sozinho para “Eventos anteriores”." },
+        { k: "local", t: "text", label: "Local", max: 120 },
+        { k: "link", t: "text", label: "Link (opcional)", max: 300, pattern: /^https:\/\/\S+$/, hint: "Página do evento, ingressos ou fotos. Começa com https://" },
         { k: "ativo", t: "bool", label: "Visível no site", def: true },
       ] },
     config: { label: "Informações", table: "config", adminOnly: true, key: "chave", kv: true },
@@ -176,11 +188,12 @@
     $("tabs").querySelectorAll("button").forEach((b) => b.setAttribute("aria-selected", b.dataset.id === id ? "true" : "false"));
     $("tab-title").textContent = tab.label;
     $("btn-novo").hidden = !!(tab.kv || tab.log);
-    $("btn-importar").hidden = !tab.folder;
+    $("btn-importar").hidden = !tab.folder || !!tab.noImport;
     $("rows").replaceChildren(h("p", { class: "empty", text: "Carregando…" }));
     if (tab.log) return drawLog();
     let q = db.from(tab.table).select("*");
-    if (!tab.kv && !tab.key) q = q.order("ordem").order("criado_em");
+    if (tab.order) q = q.order(tab.order[0], { ascending: tab.order[1] });
+    else if (!tab.kv && !tab.key) q = q.order("ordem").order("criado_em");
     const { data, error } = await q;
     if (error) { $("rows").replaceChildren(h("p", { class: "empty", text: friendly(error) })); return; }
     rows = data;
@@ -370,6 +383,7 @@
     }
     if ("preco_promo" in out && out.preco_promo != null && out.preco_promo >= out.preco) throw new Error("O preço promocional precisa ser menor que o preço normal");
     if ("instagram" in out && !out.instagram) out.instagram = null;
+    if ("link" in out && !out.link) out.link = null;
     return out;
   }
 
