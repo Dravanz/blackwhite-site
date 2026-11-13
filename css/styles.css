@@ -244,7 +244,7 @@ svg { width: 1em; height: 1em; fill: currentColor; flex: none; }
 }
 @media (min-width: 1000px) {
   body { padding-bottom: 0; }
-  .tabbar { position: fixed; top: 12px; bottom: auto; padding: 4px; box-shadow: none; }
+  .tabbar { position: fixed; top: 12px; bottom: auto; z-index: 85; padding: 4px; box-shadow: none; }
   .tabbar a { height: 40px; min-width: 104px; font-size: 13px; }
   .grid { grid-template-columns: repeat(4, 1fr); }
   .team { grid-template-columns: repeat(4, 1fr); }
