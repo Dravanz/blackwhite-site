@@ -21,20 +21,20 @@ Tempo estimado: 30 a 40 minutos, uma vez só.
 ## 2. Google (login OAuth)
 
 1. Acesse <https://console.cloud.google.com>, crie um projeto (ex.: "Barbearia site").
-2. **APIs e serviços → Tela de consentimento OAuth**: tipo *Externo*, preencha nome e e-mail de suporte. Publique o app ("Em produção").
+2. **APIs e serviços → Tela de consentimento OAuth**: tipo *Externo*, preencha nome e e-mail de suporte. Pode deixar em **Testando**: em *Público → Usuários de teste* adicione o e-mail Google de cada pessoa da equipe (só eles conseguem logar, o que é uma camada extra de segurança).
 3. **Credenciais → Criar credenciais → ID do cliente OAuth → Aplicativo da Web**.
    - *URIs de redirecionamento autorizados*: `https://SEU-PROJETO.supabase.co/auth/v1/callback`
 4. Copie o **Client ID** e o **Client secret**.
 5. No Supabase: *Authentication → Sign In / Providers → Google* → ative, cole os dois valores e salve.
 6. No Supabase: *Authentication → URL Configuration*:
-   - **Site URL**: `https://dravanz.github.io/barbearia-site/` (ou o domínio próprio)
-   - **Redirect URLs**: adicione `https://dravanz.github.io/barbearia-site/admin.html`
+   - **Site URL**: `https://dravanz.github.io/blackwhite-site/` (ou o domínio próprio)
+   - **Redirect URLs**: adicione `https://dravanz.github.io/blackwhite-site/admin.html`
      (e `http://localhost:3000/admin.html` se for testar localmente)
 
 ## 3. GitHub Pages (site)
 
 1. No repositório: *Settings → Pages → Build and deployment → Deploy from a branch* → `main` / `(root)`.
-2. Em alguns minutos o site fica em `https://dravanz.github.io/barbearia-site/`.
+2. Em alguns minutos o site fica em `https://dravanz.github.io/blackwhite-site/`.
 3. **Keep-alive** (evita que o Supabase grátis pause por inatividade): *Settings → Secrets and variables → Actions → Variables* → crie `SUPABASE_URL` e `SUPABASE_ANON_KEY` com os mesmos valores do `js/config.js`.
 
 ### Domínio próprio (opcional)
