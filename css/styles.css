@@ -283,3 +283,4 @@ html.lock { overflow: hidden; }
 .shots__t img:hover { filter: none; }
 @media (min-width: 700px) { .shots__t img { width: 260px; height: 320px; } }
 @media (hover: none) { .shots__t img { filter: none; } }
+.member .item__img img { object-position: center 20%; }
