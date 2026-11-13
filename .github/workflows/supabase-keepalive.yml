@@ -18,4 +18,4 @@ jobs:
           URL: ${{ vars.SUPABASE_URL }}
           KEY: ${{ vars.SUPABASE_ANON_KEY }}
         run: |
-          curl -fsS "$URL/rest/v1/config?select=chave&limit=1" -H "apikey: $KEY" -H "Authorization: Bearer $KEY" > /dev/null
+          curl -fsS "$URL/rest/v1/config?select=chave&limit=1" -H "apikey: $KEY" > /dev/null

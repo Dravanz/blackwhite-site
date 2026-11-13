@@ -5,8 +5,8 @@
 //  NUNCA coloque aqui a chave "service_role".
 // =====================================================================
 window.SITE_CONFIG = {
-  supabaseUrl: "",      // ex.: "https://abcdefgh.supabase.co"
-  supabaseAnonKey: "",  // ex.: "eyJhbGciOi..."
+  supabaseUrl: "https://ytzuunjbstfvzgbohets.supabase.co",
+  supabaseAnonKey: "sb_publishable_nfO0L20qYw-IaUHXaLrIKw_3foedsnW", // chave publishable (pública)
 
   // Nomes exibidos no site
   marca: { a: "Black", b: "White" },
