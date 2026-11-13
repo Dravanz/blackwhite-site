@@ -40,7 +40,12 @@
   <main class="wrap adm__main">
     <div class="adm__head">
       <h2 class="adm__title" id="tab-title"></h2>
-      <button class="btn btn--light btn--sm" id="btn-novo" type="button">+ Novo</button>
+      <div class="adm__actions">
+        <label class="btn btn--outline btn--sm" id="btn-importar" title="Selecione várias fotos: cada uma vira um item oculto para você completar">
+          Importar várias fotos<input type="file" id="multi" accept="image/jpeg,image/png,image/webp" multiple hidden>
+        </label>
+        <button class="btn btn--light btn--sm" id="btn-novo" type="button">+ Novo</button>
+      </div>
     </div>
     <div class="rows" id="rows"></div>
   </main>

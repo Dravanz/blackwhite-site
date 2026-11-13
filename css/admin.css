@@ -74,3 +74,5 @@
 .login__card .eyebrow { color: var(--mute-d); }
 .login__card .text { color: var(--mute-d); }
 .login__msg--deny { padding: 12px 14px; border-radius: 10px; background: rgba(255,122,107,.12); }
+.adm__actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+#btn-importar { cursor: pointer; }

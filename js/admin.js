@@ -173,6 +173,7 @@
     $("tabs").querySelectorAll("button").forEach((b) => b.setAttribute("aria-selected", b.dataset.id === id ? "true" : "false"));
     $("tab-title").textContent = tab.label;
     $("btn-novo").hidden = !!tab.kv;
+    $("btn-importar").hidden = !tab.folder;
     $("rows").replaceChildren(h("p", { class: "empty", text: "Carregando…" }));
     let q = db.from(tab.table).select("*");
     if (!tab.kv && !tab.key) q = q.order("ordem").order("criado_em");
@@ -269,6 +270,32 @@
     $("dlg").showModal();
   }
   $("btn-novo").addEventListener("click", () => edit(null));
+
+  // Importação em lote: cada foto vira um item OCULTO (ativo = false) para completar depois
+  $("multi").addEventListener("change", async () => {
+    const tab = TABS[current], files = [...$("multi").files].slice(0, 50);
+    $("multi").value = "";
+    if (!files.length || !tab.folder) return;
+    const base = { cortes: { preco: 0 }, barbeiros: {}, cafe: { preco: 0 }, loja: { preco: 0 } }[current];
+    let ok = 0, fail = 0;
+    for (const [i, f] of files.entries()) {
+      toast(`Enviando ${i + 1} de ${files.length}…`);
+      try {
+        if (!/^image\/(jpeg|png|webp)$/.test(f.type) || f.size > 15 * 1024 * 1024) throw new Error("tipo/tamanho");
+        const blob = await toWebp(f);
+        const path = `${tab.folder}/${crypto.randomUUID()}.webp`;
+        const up = await db.storage.from("imagens").upload(path, blob, { contentType: "image/webp", cacheControl: "31536000", upsert: false });
+        if (up.error) throw up.error;
+        let nome = f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
+        if (nome.length < 2 || /^(img|dsc|photo|whatsapp|image|pxl)\b/i.test(nome)) nome = `${tab.label} ${String(i + 1).padStart(2, "0")}`;
+        const res = await db.from(tab.table).insert({ ...base, nome, foto: path, ativo: false, ordem: 100 + i }).select();
+        if (res.error || !res.data?.length) { await db.storage.from("imagens").remove([path]); throw res.error || new Error("sem permissão"); }
+        ok++;
+      } catch (e) { fail++; console.error(e); }
+    }
+    toast(`${ok} importada(s) como "Oculto"${fail ? ` · ${fail} com erro` : ""}. Complete nome e preço e marque "Visível".`, !!fail && !ok);
+    open(current);
+  });
   $("btn-fechar").addEventListener("click", () => $("dlg").close());
 
   function collect() {
