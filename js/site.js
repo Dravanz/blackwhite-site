@@ -143,6 +143,25 @@
     els.forEach((e) => io.observe(e));
   }
 
+  // ---------- "Ver mais": mostra só os primeiros itens para não poluir ----------
+  const LIMITE = () => (matchMedia("(min-width: 1000px)").matches ? 12 : 10);
+  function verMais(container, items, n = LIMITE(), onToggle) {
+    container.parentElement.querySelectorAll(":scope > .more").forEach((b) => b.remove());
+    if (items.length <= n) { items.forEach((el) => (el.hidden = false)); onToggle && onToggle(); return; }
+    let aberto = false;
+    const btn = h("button", { class: "btn btn--line more", type: "button" });
+    const apply = () => {
+      items.forEach((el, i) => { el.hidden = !aberto && i >= n; if (aberto) el.classList.add("in"); });
+      btn.replaceChildren(aberto ? "Ver menos" : `Ver mais (${items.length - n})`, icon(aberto ? "up" : "down"));
+      onToggle && onToggle();
+    };
+    btn.addEventListener("click", () => {
+      aberto = !aberto; apply();
+      if (!aberto) container.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    container.after(btn); apply();
+  }
+
   // ---------- barbearia ----------
   async function barbearia() {
     const [cortes, equipe] = await Promise.all([load("cortes"), load("barbeiros")]);
@@ -154,6 +173,8 @@
         h("h3", { text: c.nome }),
         c.descricao && h("p", { class: "item__desc", text: c.descricao }),
         h("div", { class: "item__meta" }, h("span", { class: "price", text: brl(c.preco) }), c.duracao_min && h("span", { class: "small", text: `${c.duracao_min} min` }))))) : [h("p", { class: "empty", text: "Em breve" })]));
+
+    if (cortes.length) verMais(g, [...g.children]);
 
     const t = document.getElementById("equipe");
     t.replaceChildren(...(equipe.length ? equipe.map((b) => h("figure", { class: "member rv" },
@@ -175,7 +196,15 @@
           h("div", { class: "menu-row__img" }, imgUrl(i.foto) ? h("img", { src: imgUrl(i.foto), alt: "", loading: "lazy" }) : null),
           h("div", {}, h("b", { text: (i.destaque ? "★ " : "") + i.nome }), i.descricao && h("span", { text: i.descricao })),
           h("span", { class: "price", text: brl(i.preco) }))))));
-      if (!itens.length) box.replaceChildren(h("p", { class: "empty", text: "Cardápio em breve" }));
+      if (!itens.length) return box.replaceChildren(h("p", { class: "empty", text: "Cardápio em breve" }));
+      // em "Tudo" mostra só os primeiros itens; ao escolher uma categoria mostra todos
+      const rows = [...box.querySelectorAll(".menu-row")];
+      const syncCats = () => box.querySelectorAll(".menu-cat").forEach((c) => {
+        const vis = [...c.querySelectorAll(".menu-row")].filter((r) => !r.hidden);
+        c.hidden = !vis.length;
+        c.querySelectorAll(".menu-row").forEach((r) => r.classList.toggle("is-last", r === vis[vis.length - 1]));
+      });
+      verMais(box, rows, only ? Infinity : LIMITE(), syncCats);
     };
     const btns = [["Tudo", null], ...cats.map((c) => [c, c])].map(([label, val]) => {
       const b = h("button", { class: "chip", type: "button", "aria-pressed": val === null ? "true" : "false", text: label });
@@ -239,7 +268,11 @@
     of.hidden = !ofertas.length;
     document.getElementById("ofertas-grid").replaceChildren(...ofertas.map((p) => produtoCard(p)));
     const rest = ordered.filter((p) => p !== top && !ofertas.includes(p));
-    document.getElementById("produtos").replaceChildren(...(rest.length || top || ofertas.length ? rest.map((p) => produtoCard(p)) : [h("p", { class: "empty", text: "Novidades em breve" })]));
+    const pg = document.getElementById("produtos");
+    pg.replaceChildren(...(rest.length || top || ofertas.length ? rest.map((p) => produtoCard(p)) : [h("p", { class: "empty", text: "Novidades em breve" })]));
+    if (rest.length) verMais(pg, [...pg.children]);
+    const og = document.getElementById("ofertas-grid");
+    if (ofertas.length) verMais(og, [...og.children]);
   }
 
   // ---------- início ----------

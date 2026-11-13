@@ -291,3 +291,6 @@ html.lock { overflow: hidden; }
    para cima, cobrindo o relógio/bateria e escondendo o conteúdo que passa por trás. */
 html { background: var(--bg); }
 .nav::before { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: 120px; background: var(--bg); pointer-events: none; }
+.more { display: flex; margin: 28px auto 0; min-width: 220px; }
+.menu-row.is-last { border-bottom: 0; }
+#cortes, #produtos, #ofertas-grid, #cardapio { scroll-margin-top: 100px; }
