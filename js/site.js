@@ -300,14 +300,16 @@
   }
 
   function eventoCard(e, passado, big) {
-    const d = new Date(e.inicio);
-    const chip = h("span", { class: "evt__date" }, h("b", { text: dia(d) }), mes(d));
+    const d = e.inicio ? new Date(e.inicio) : null;
+    const chip = d ? h("span", { class: "evt__date" }, h("b", { text: dia(d) }), mes(d)) : h("span", { class: "evt__date evt__date--tbd" }, h("b", { text: "?" }), "data");
     const link = SAFE_LINK.test(e.link || "") && h("a", { class: big ? "btn btn--outline" : "evt__link", href: e.link, target: "_blank", rel: "noopener noreferrer" }, passado ? "Ver como foi" : "Saiba mais", icon("arrow"));
-    const timer = !passado ? h("span", { class: "timer" }) : null;
+    const timer = !passado && d ? h("span", { class: "timer" }) : null;
     if (timer) faltam(timer, d.getTime());
-    const cta = !passado && quero(`Olá! Quero participar do evento: ${e.nome} (${dia(d)}/${String(d.getMonth() + 1).padStart(2, "0")})`, big ? "btn--dark" : "btn--line btn--sm item__cta", "Quero participar");
+    const cta = !passado && (d
+      ? quero(`Olá! Quero participar do evento: ${e.nome} (${dia(d)}/${String(d.getMonth() + 1).padStart(2, "0")})`, big ? "btn--dark" : "btn--line btn--sm item__cta", "Quero participar")
+      : quero(`Olá! Quero ser avisado quando sair a data do evento: ${e.nome}`, big ? "btn--dark" : "btn--line btn--sm item__cta", "Quero ser avisado"));
     const body = [
-      h("span", { class: "small", text: dataLonga(d) }),
+      h("span", { class: "small", text: d ? dataLonga(d) : "Data a definir" }),
       h("h3", { text: e.nome }),
       e.descricao && h("p", { class: "item__desc", text: e.descricao }),
       e.local && h("span", { class: "evt__local", text: e.local }),
@@ -337,10 +339,13 @@
   }
 
   async function eventos() {
-    const todos = await load("eventos", "inicio");
+    const todos = await load("eventos", "ordem");
     const agora = Date.now() - 6 * 3600000; // continua em "próximos" até 6h depois de começar
-    const prox = todos.filter((e) => new Date(e.inicio).getTime() >= agora).sort((a, b) => new Date(a.inicio) - new Date(b.inicio));
-    const pass = todos.filter((e) => new Date(e.inicio).getTime() < agora).sort((a, b) => new Date(b.inicio) - new Date(a.inicio));
+    const semData = todos.filter((e) => !e.inicio);
+    const comData = todos.filter((e) => e.inicio);
+    // com data primeiro (mais próximo antes), depois os que ainda estão sendo planejados
+    const prox = [...comData.filter((e) => new Date(e.inicio).getTime() >= agora).sort((a, b) => new Date(a.inicio) - new Date(b.inicio)), ...semData];
+    const pass = comData.filter((e) => new Date(e.inicio).getTime() < agora).sort((a, b) => new Date(b.inicio) - new Date(a.inicio));
     const [top, ...resto] = prox;
     document.getElementById("proximo").replaceChildren(...(top ? [eventoCard(top, false, true)] : []));
     document.getElementById("agenda").replaceChildren(...resto.map((e) => eventoCard(e)), emBreve(window.__cfg || {}));

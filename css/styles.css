@@ -320,3 +320,4 @@ html { background: var(--bg); }
 @media (max-width: 999px) { .tabbar a { min-width: 0; padding: 0 13px; font-size: 13px; } }
 .feature.evt .feature__body::before { content: "Não perca"; }
 .feature.evt .item__img img { object-position: top; }
+.evt__date--tbd b { font-size: 26px; }

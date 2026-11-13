@@ -32,6 +32,7 @@ window.DEMO = {
   eventos: [
     { id: "e1", nome: "Black White Networking", descricao: "Um dia inteiro de networking com empresários renomados.", inicio: "2026-11-08T09:00:00-03:00", local: "Rampa Hub Quartier · Pelotas", link: "https://dravanz.github.io/blackwhite-evento/", foto: "img/eventos/networking.webp" },
     { id: "e2", nome: "Café & Barba", descricao: "Manhã de café especial e barba na navalha.", inicio: "2026-11-29T09:00:00-03:00", local: "Barbearia BlackWhite", foto: "img/eventos/cafe-e-barba.webp" },
+    { id: "e4", nome: "Workshop de barba", descricao: "Em planejamento.", inicio: null, local: "Barbearia BlackWhite" },
     { id: "e3", nome: "Noite do Degradê", descricao: "Cortes, música e brindes.", inicio: "2026-12-13T19:00:00-03:00", local: "Barbearia BlackWhite", foto: "img/eventos/noite-do-degrade.webp" },
   ],
   config: { whatsapp: "", instagram: "", endereco: "Seu endereço aqui", horario: "Ter a sáb · 9h às 20h" },

@@ -6,7 +6,7 @@ create table if not exists public.eventos (
   id          uuid primary key default gen_random_uuid(),
   nome        text not null check (char_length(nome) between 2 and 80),
   descricao   text not null default '' check (char_length(descricao) <= 500),
-  inicio      timestamptz not null,
+  inicio      timestamptz,                  -- vazio = data a definir
   local       text not null default '' check (char_length(local) <= 120),
   link        text check (link is null or (link ~ '^https://' and char_length(link) <= 300)),
   foto        text check (foto is null or char_length(foto) <= 300),
@@ -15,6 +15,8 @@ create table if not exists public.eventos (
   criado_em   timestamptz not null default now(),
   atualizado_em timestamptz not null default now()
 );
+
+alter table public.eventos alter column inicio drop not null;
 
 drop trigger if exists trg_atualizado on public.eventos;
 create trigger trg_atualizado before update on public.eventos for each row execute function public.tocar_atualizado();
