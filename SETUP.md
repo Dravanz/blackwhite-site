@@ -12,10 +12,11 @@ Tempo estimado: 30 a 40 minutos, uma vez só.
    ```sql
    insert into public.equipe_admin (email, papel) values ('dono@gmail.com', 'admin');
    ```
-4. **Tempo do token**: *Project Settings → JWT Keys* (ou *Auth → Sessions*, conforme a versão do painel) → **Access token expiry** = `900` segundos.
-5. **Desligue o login por e-mail/senha**: *Authentication → Sign In / Providers → Email* → desativar. Só o Google fica ligado.
-6. Copie *Project Settings → API*: **Project URL** e a chave **anon / publishable**. Cole em `js/config.js`.
-   > Nunca use a chave `service_role` / `secret` no site.
+4. **Desligue o login por e-mail/senha**: *Authentication → Sign In / Providers → Email* → desativar. Só o Google fica ligado.
+5. Copie a **URL do projeto** (*Project Settings → Data API*, ou botão **Connect** na tela inicial) e a chave **publishable** (`sb_publishable_...`) ou **anon** (aba *Legacy*) em *Project Settings → API Keys*. Cole em `js/config.js`.
+   > Nunca use a chave `secret` / `service_role` no site.
+
+> A sessão de 15 minutos é garantida pelo banco (função `papel_atual()` no SQL) e pelo painel, que desloga sozinho. Não é preciso mudar o tempo do token no painel do Supabase.
 
 ## 2. Google (login OAuth)
 
