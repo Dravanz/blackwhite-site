@@ -270,3 +270,6 @@ html.lock { overflow: hidden; }
 .book__frame { flex: 1; width: 100%; border: 0; background: #fff; }
 .sec-head > .btn { justify-self: start; }
 @media (max-width: 699px) { .book { width: 100%; height: 100%; max-height: 100svh; border-radius: 0; margin: 0; } }
+.book__tip { margin: 0; padding: 8px 18px; font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--line); background: var(--bg3); }
+.book__bar { position: sticky; top: 0; }
+.book__ext { padding: 8px 12px; border: 1px solid rgba(201,162,91,.5); border-radius: 999px; }

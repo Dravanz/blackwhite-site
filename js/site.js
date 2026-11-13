@@ -64,15 +64,20 @@
   let agendaDlg = null;
   function agenda(url) {
     if (!agendaDlg) {
-      const frame = h("iframe", { class: "book__frame", title: "Agenda online", loading: "lazy", referrerpolicy: "strict-origin-when-cross-origin", allow: "payment" });
+      // sandbox SEM "allow-top-navigation": o Booksy não consegue trocar a página inteira
+      // (era isso que tirava o cliente do site e sumia com os botões).
+      // Logins com Google/Facebook abrem em janela própria (allow-popups).
+      const frame = h("iframe", { class: "book__frame", title: "Agenda online", loading: "lazy", referrerpolicy: "strict-origin-when-cross-origin", allow: "payment",
+        sandbox: "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals" });
       const close = h("button", { class: "book__x", type: "button", "aria-label": "Fechar" }, "×");
       agendaDlg = h("dialog", { class: "book", "aria-label": "Agendar horário" },
         h("div", { class: "book__bar" }, h("b", { text: "Agendar horário" }),
           h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "book__ext", text: "Abrir em nova aba" }), close),
+        h("p", { class: "book__tip", text: "Terminou o agendamento? É só fechar no ×. Se o login do Booksy não abrir aqui, use “Abrir em nova aba”." }),
         frame);
       close.addEventListener("click", () => agendaDlg.close());
       agendaDlg.addEventListener("click", (e) => { if (e.target === agendaDlg) agendaDlg.close(); });
-      agendaDlg.addEventListener("close", () => document.documentElement.classList.remove("lock"));
+      agendaDlg.addEventListener("close", () => { document.documentElement.classList.remove("lock"); frame.src = url; });
       document.body.append(agendaDlg);
       frame.src = url;
     }
