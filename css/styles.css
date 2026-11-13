@@ -256,3 +256,17 @@ svg { width: 1em; height: 1em; fill: currentColor; flex: none; }
 .page404 { min-height: 100svh; display: grid; place-items: center; text-align: center; padding: 40px var(--g); }
 .page404 h1 { margin: 0 0 20px; font: 400 clamp(90px, 30vw, 220px)/.85 var(--title); color: transparent; -webkit-text-stroke: 1.5px var(--fg); }
 .page404 p { margin: 0 0 24px; color: var(--muted); }
+
+/* ---------- agenda (Booksy) ---------- */
+html.lock { overflow: hidden; }
+.book { width: min(100% - 16px, 760px); height: min(100svh - 16px, 900px); max-width: none; max-height: none; padding: 0; border: 1px solid var(--line); border-radius: 20px; background: var(--bg2); color: var(--fg); overflow: hidden; }
+.book[open] { display: flex; flex-direction: column; animation: pop .35s var(--ease); }
+.book::backdrop { background: rgba(0,0,0,.72); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+@keyframes pop { from { opacity: 0; transform: translateY(24px) scale(.98); } }
+.book__bar { display: flex; align-items: center; gap: 14px; padding: 12px 12px 12px 18px; border-bottom: 1px solid var(--line); }
+.book__bar b { font: 400 22px/1 var(--title); text-transform: uppercase; letter-spacing: .02em; margin-right: auto; }
+.book__ext { font-size: 13px; font-weight: 700; color: var(--brass); text-decoration: none; }
+.book__x { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: none; font-size: 24px; line-height: 1; cursor: pointer; }
+.book__frame { flex: 1; width: 100%; border: 0; background: #fff; }
+.sec-head > .btn { justify-self: start; }
+@media (max-width: 699px) { .book { width: 100%; height: 100%; max-height: 100svh; border-radius: 0; margin: 0; } }

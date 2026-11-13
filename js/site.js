@@ -60,6 +60,27 @@
 
   }
 
+  // Agenda do Booksy numa janela por cima do site (carrega só quando abre)
+  let agendaDlg = null;
+  function agenda(url) {
+    if (!agendaDlg) {
+      const frame = h("iframe", { class: "book__frame", title: "Agenda online", loading: "lazy", referrerpolicy: "strict-origin-when-cross-origin", allow: "payment" });
+      const close = h("button", { class: "book__x", type: "button", "aria-label": "Fechar" }, "×");
+      agendaDlg = h("dialog", { class: "book", "aria-label": "Agendar horário" },
+        h("div", { class: "book__bar" }, h("b", { text: "Agendar horário" }),
+          h("a", { href: url, target: "_blank", rel: "noopener noreferrer", class: "book__ext", text: "Abrir em nova aba" }), close),
+        frame);
+      close.addEventListener("click", () => agendaDlg.close());
+      agendaDlg.addEventListener("click", (e) => { if (e.target === agendaDlg) agendaDlg.close(); });
+      agendaDlg.addEventListener("close", () => document.documentElement.classList.remove("lock"));
+      document.body.append(agendaDlg);
+      frame.src = url;
+    }
+    if (typeof agendaDlg.showModal !== "function") { window.open(url, "_blank", "noopener"); return; }
+    document.documentElement.classList.add("lock");
+    agendaDlg.showModal();
+  }
+
   function chrome(cfg) {
     const wa = (cfg.whatsapp || "").replace(/\D/g, "");
     const ig = (cfg.instagram || "").replace(/[^A-Za-z0-9._]/g, "");
@@ -74,7 +95,15 @@
     if (!LIVE) foot.querySelector(".wrap").prepend(h("p", { class: "notice", text: "Modo demonstração: conteúdo de exemplo. Preencha js/config.js com os dados do Supabase para usar o conteúdo real." }));
 
     const cta = document.getElementById("cta");
-    if (cta && wa) {
+    const booksy = /^https:\/\/([a-z0-9-]+\.)?booksy\.com\//.test(C.booksy || "") ? C.booksy : null;
+    if (cta && page === "barbearia" && booksy) {
+      const open = h("button", { class: "btn btn--brass", type: "button" }, "Agendar horário", icon("arrow"));
+      open.addEventListener("click", () => agenda(booksy));
+      const extra = wa && h("a", { class: "btn btn--line", href: `https://wa.me/${wa}`, target: "_blank", rel: "noopener noreferrer" }, icon("wa"), "WhatsApp");
+      cta.prepend(...[open, extra].filter(Boolean));
+      const head = document.querySelector("#cortes-sec .sec-head");
+      if (head) { const b2 = h("button", { class: "btn btn--line btn--sm", type: "button" }, "Agendar", icon("arrow")); b2.addEventListener("click", () => agenda(booksy)); head.append(b2); }
+    } else if (cta && wa) {
       const msg = { barbearia: "Olá! Quero agendar um horário.", cafe: "Olá! Quero fazer um pedido.", loja: "Olá! Quero saber mais sobre os produtos." }[page];
       cta.prepend(h("a", { class: "btn btn--brass", href: `https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, target: "_blank", rel: "noopener noreferrer" }, icon("wa"),
         page === "barbearia" ? "Agendar horário" : "Chamar no WhatsApp"));

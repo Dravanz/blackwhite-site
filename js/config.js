@@ -14,6 +14,9 @@ window.SITE_CONFIG = {
   cafe: "Café",
   loja: "Loja",
 
+  // Agenda online (Booksy). Abre dentro do site no botão "Agendar horário".
+  booksy: "https://booksy.com/pt-br/instant-experiences/widget/399419",
+
   // Tempo máximo de sessão do painel (o banco também confere isso)
   sessaoMinutos: 15,
 };
