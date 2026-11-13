@@ -3,18 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Barbearia · Café · Loja</title>
-  <meta name="description" content="Barbearia, café e loja de roupas no mesmo endereço.">
-  <meta name="theme-color" content="#0b0b0b">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='16' height='32' fill='%23fff'/><rect x='16' width='16' height='32' fill='%23000'/><rect x='.5' y='.5' width='31' height='31' fill='none' stroke='%23000'/></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Yellowtail&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>Barbearia · Cortes e equipe</title>
+  <meta name="description" content="Portfólio de cortes, preços e a equipe de barbeiros. Também café e loja no mesmo endereço.">
+  <meta name="theme-color" content="#fafaf9">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%23fff' stroke='%23111' stroke-width='3'/><path d='M16 2a14 14 0 0 0 0 28z' fill='%23111'/></svg>">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body data-page="home">
+<body data-page="barbearia">
 
 <svg class="sprite" aria-hidden="true">
   <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -23,13 +20,19 @@
 </svg>
 
 <main>
-  <h1 class="sr">Barbearia, café e loja</h1>
-  <div class="doors">
-    <a class="door" data-door="barbearia" href="barbearia.html"><span class="door__bg"></span><span class="door__n">01</span><h2 data-name="barbearia">Barbearia</h2><p>Cortes e equipe <svg><use href="#arrow"/></svg></p></a>
-    <a class="door" data-door="cafe" href="cafe.html"><span class="door__bg"></span><span class="door__n">02</span><h2 data-name="cafe">Café</h2><p>Cardápio <svg><use href="#arrow"/></svg></p></a>
-    <a class="door" data-door="loja" href="loja.html"><span class="door__bg"></span><span class="door__n">03</span><h2 data-name="loja">Loja</h2><p>Roupas e acessórios <svg><use href="#arrow"/></svg></p></a>
-  </div>
+  <section class="head"><div class="wrap">
+    <h1 data-name="barbearia">Barbearia</h1><p>Cortes com assinatura. Escolha o seu estilo e venha tomar um café com a gente.</p><div class="head__cta" id="cta"></div>
+  </div></section>
+  <section class="block" aria-labelledby="t-cortes"><div class="wrap">
+    <h2 class="big" id="t-cortes">Cortes</h2>
+    <div class="grid" id="cortes"><p class="empty">Carregando…</p></div>
+  </div></section>
+  <section class="block" aria-labelledby="t-equipe"><div class="wrap">
+    <h2 class="big" id="t-equipe">Nossa equipe</h2>
+    <div class="team" id="equipe"><p class="empty">Carregando…</p></div>
+  </div></section>
 </main>
+
 <script src="js/config.js"></script>
 <script src="js/vendor/supabase.js"></script>
 <script src="js/demo.js"></script>

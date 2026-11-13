@@ -48,23 +48,31 @@
 
   // ---------- layout comum ----------
   function chrome(cfg) {
-    const links = [["barbearia.html", C.barbearia, "barbearia"], ["cafe.html", C.cafe, "cafe"], ["loja.html", C.loja, "loja"]];
+    const links = [["./", C.barbearia, "barbearia"], ["cafe.html", C.cafe, "cafe"], ["loja.html", C.loja, "loja"]];
     const nav = h("header", { class: "nav" },
-      h("a", { href: "index.html", class: "brand", "aria-label": "Início" }, h("span", { text: C.marca.a }), h("span", { text: C.marca.b })),
-      h("nav", { class: "nav__links", "aria-label": "Seções" }, links.map(([href, label, id]) => h("a", { href, "aria-current": page === id ? "page" : null, text: label }))));
+      h("div", { class: "wrap nav__in" },
+        h("a", { href: "./", class: "brand", "aria-label": "Início" }, h("span", { text: C.marca.a }), h("span", { text: " " + C.marca.b })),
+        h("a", { href: "admin.html", class: "btn btn--outline nav__login", rel: "nofollow", text: "Entrar" })),
+      h("nav", { class: "tabs-nav", "aria-label": "Seções" }, links.map(([href, label, id]) => h("a", { href, "aria-current": page === id ? "page" : null, text: label }))));
     document.body.prepend(nav);
 
     const wa = (cfg.whatsapp || "").replace(/\D/g, "");
     const ig = (cfg.instagram || "").replace(/[^A-Za-z0-9._]/g, "");
     const foot = h("footer", { class: "foot" }, h("div", { class: "wrap" },
-      h("a", { href: "index.html", class: "brand" }, h("span", { text: C.marca.a }), h("span", { text: C.marca.b })),
+      h("a", { href: "./", class: "brand" }, h("span", { text: C.marca.a }), h("span", { text: " " + C.marca.b })),
       h("div", { class: "foot__info" }, cfg.endereco && h("span", { text: cfg.endereco }), cfg.horario && h("span", { text: cfg.horario })),
       h("div", { class: "foot__links" },
         wa && h("a", { href: `https://wa.me/${wa}`, target: "_blank", rel: "noopener noreferrer" }, icon("wa"), "WhatsApp"),
-        ig && h("a", { href: `https://instagram.com/${ig}`, target: "_blank", rel: "noopener noreferrer" }, icon("ig"), "@" + ig)),
-      h("a", { href: "admin.html", class: "foot__adm", rel: "nofollow", text: "Área restrita" })));
+        ig && h("a", { href: `https://instagram.com/${ig}`, target: "_blank", rel: "noopener noreferrer" }, icon("ig"), "@" + ig))));
     document.body.append(foot);
     if (!LIVE) foot.prepend(h("div", { class: "wrap" }, h("p", { class: "notice", text: "Modo demonstração: conteúdo de exemplo. Preencha js/config.js com os dados do Supabase para usar o conteúdo real." })));
+
+    const cta = document.getElementById("cta");
+    if (cta && wa) {
+      const msg = { barbearia: "Olá! Quero agendar um horário.", cafe: "Olá! Quero fazer um pedido.", loja: "Olá! Quero saber mais sobre os produtos." }[page];
+      cta.append(h("a", { class: "btn btn--dark", href: `https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, target: "_blank", rel: "noopener noreferrer" }, icon("wa"),
+        page === "barbearia" ? "Agendar pelo WhatsApp" : "Falar no WhatsApp"));
+    }
   }
 
   function reveal() {
@@ -173,24 +181,13 @@
     document.getElementById("produtos").replaceChildren(...(rest.length || top || ofertas.length ? rest.map((p) => produtoCard(p)) : [h("p", { class: "empty", text: "Novidades em breve" })]));
   }
 
-  // ---------- home ----------
-  async function home() {
-    const [c, p, f] = await Promise.all([load("cortes"), load("produtos"), load("cafe_itens")]);
-    const bg = { barbearia: c.find((x) => x.foto), loja: p.find((x) => x.foto), cafe: f.find((x) => x.foto) };
-    for (const [k, item] of Object.entries(bg)) {
-      const url = item && imgUrl(item.foto);
-      const el = document.querySelector(`[data-door="${k}"] .door__bg`);
-      if (url && el) el.style.backgroundImage = `url("${url}")`;
-    }
-  }
-
   // ---------- início ----------
   (async () => {
     const cfg = await loadConfig();
     window.__cfg = cfg;
     chrome(cfg);
     document.querySelectorAll("[data-name]").forEach((el) => { el.textContent = C[el.dataset.name] || el.textContent; });
-    try { await ({ home, barbearia, cafe, loja }[page] || (async () => {}))(); }
+    try { await ({ barbearia, cafe, loja }[page] || (async () => {}))(); }
     finally { reveal(); }
   })();
 })();

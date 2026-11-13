@@ -1,8 +1,8 @@
 /* ============ painel administrativo ============ */
 .adm { min-height: 100svh; }
-.login { min-height: 100svh; display: grid; place-items: center; padding: 24px var(--g); background: linear-gradient(90deg, var(--w) 50%, var(--k) 50%); }
-.login__card { width: min(100%, 440px); padding: 40px 28px; background: var(--k); border: 1px solid var(--line-d); display: grid; gap: 6px; }
-.login__title { margin: 0 0 8px; font: 400 72px/1 var(--script); }
+.login { min-height: 100svh; display: grid; place-items: center; padding: 24px var(--g); background: var(--bg); }
+.login__card { width: min(100%, 420px); padding: 36px 28px; background: var(--k); color: var(--w); border-radius: 20px; display: grid; gap: 6px; box-shadow: 0 20px 50px rgba(0,0,0,.12); }
+.login__title { margin: 0 0 6px; font-size: 34px; font-weight: 800; letter-spacing: -.03em; }
 .login__card .btn { width: 100%; margin-top: 10px; }
 .login__note { margin: 14px 0 0; font-size: 13px; color: var(--mute-d); }
 .login__back { margin-top: 18px; font-size: 13px; opacity: .6; text-decoration: none; }
@@ -68,3 +68,9 @@
 .dlg__body > *, .f__pic > *, .f__pic-btns > * { min-width: 0; }
 .f__pic input[type=file] { width: 100%; }
 #btn-salvar { margin-left: auto; }
+.adm { background: var(--k); color: var(--w); }
+.adm .btn--outline:hover { background: var(--w); color: var(--k); }
+.login__card .btn--light:hover { background: transparent; color: var(--w); }
+.login__card .eyebrow { color: var(--mute-d); }
+.login__card .text { color: var(--mute-d); }
+.login__msg--deny { padding: 12px 14px; border-radius: 10px; background: rgba(255,122,107,.12); }

@@ -120,13 +120,13 @@
   // ---------- sessão ----------
   let papel = null, expiraEm = 0, timerT = null, current = "cortes", rows = [];
 
-  async function sair(msg) {
+  async function sair(msg, deny) {
     clearInterval(timerT);
     await db.auth.signOut().catch(() => {});
     sessionStorage.clear();
     $("panel").hidden = true; $("login").hidden = false;
     if ($("dlg").open) $("dlg").close();
-    if (msg) { $("login-msg").textContent = msg; $("login-msg").classList.add("is-err"); }
+    if (msg) { $("login-msg").textContent = msg; $("login-msg").classList.add("is-err"); $("login-msg").classList.toggle("login__msg--deny", !!deny); }
   }
 
   function startTimer() {
@@ -146,7 +146,7 @@
     const { data, error } = await db.rpc("minha_sessao");
     const info = data && data[0];
     if (error || !info || !info.papel) {
-      return sair(error ? friendly(error) : `A conta ${session.user.email} não tem acesso ao painel. Peça ao administrador para liberar.`);
+      return sair(error ? friendly(error) : `Você não tem acesso ao painel com a conta ${session.user.email}. Entre em contato com o administrador para liberar o acesso.`, true);
     }
     papel = info.papel;
     const tokenExp = session.expires_at * 1000;

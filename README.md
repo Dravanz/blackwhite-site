@@ -3,12 +3,12 @@
 Site com três seções no mesmo endereço (Barbearia, Café e Loja) e um painel
 administrativo para o dono e os gerentes editarem tudo pelo celular.
 
-- **Barbearia** (`barbearia.html`): portfólio de cortes com foto, nome, valor e duração, e a equipe de barbeiros com uma frase de cada um.
+- **Barbearia** (página inicial, `index.html`): portfólio de cortes com foto, nome, valor e duração, e a equipe de barbeiros com uma frase de cada um.
 - **Café** (`cafe.html`): cardápio por categoria, com itens em destaque e "esgotado hoje".
 - **Loja** (`loja.html`): produtos com destaque grande no topo, preço promocional com % OFF, contagem regressiva da promoção, selos ("Novo", "Últimas peças"), tamanhos e botão "Quero este" direto para o WhatsApp.
 - **Painel** (`admin.html`): login com Google, sessão de 15 minutos, cadastro/edição/exclusão com envio de fotos.
 
-Visual baseado no site do evento Black White.
+Visual minimalista inspirado no site do evento Black White, com a fonte do próprio sistema (nada para baixar, carrega rápido no celular).
 
 ## Como funciona
 
@@ -50,7 +50,7 @@ Siga o passo a passo em [SETUP.md](SETUP.md).
 ## Estrutura
 
 ```
-index.html  barbearia.html  cafe.html  loja.html  admin.html
+index.html (barbearia)  cafe.html  loja.html  admin.html  barbearia.html (redireciona)
 css/styles.css   css/admin.css
 js/config.js     ← URL e chave anon do Supabase
 js/site.js       ← site público

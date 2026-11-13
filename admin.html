@@ -3,15 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="referrer" content="no-referrer">
   <meta name="robots" content="noindex, nofollow">
   <title>Painel · Área restrita</title>
   <meta name="theme-color" content="#0b0b0b">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='16' height='32' fill='%23fff'/><rect x='16' width='16' height='32' fill='%23000'/><rect x='.5' y='.5' width='31' height='31' fill='none' stroke='%23000'/></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Yellowtail&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/admin.css">
 </head>
@@ -25,14 +22,14 @@
     <p class="text" id="login-msg">Entre com a conta Google cadastrada pelo administrador.</p>
     <button class="btn btn--light" id="btn-google" type="button">Entrar com Google</button>
     <p class="login__note">Por segurança a sessão expira em 15 minutos e é preciso entrar de novo.</p>
-    <a class="login__back" href="index.html">← Voltar ao site</a>
+    <a class="login__back" href="./">← Voltar ao site</a>
   </div>
 </section>
 
 <!-- Painel -->
 <div class="panel" id="panel" hidden>
   <header class="bar">
-    <a href="index.html" class="brand" target="_blank" rel="noopener"><span>Painel</span></a>
+    <a href="./" class="brand" target="_blank" rel="noopener"><span>Painel</span></a>
     <div class="bar__right">
       <span class="bar__who" id="who"></span>
       <span class="bar__timer" id="timer" title="Tempo restante da sessão">15:00</span>
